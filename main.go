@@ -65,10 +65,16 @@ func client(ctx context.Context) {
 		for scanner.Scan() {
 			select {
 			case lines <- scanner.Bytes():
+				log.Printf("[DEBUG]  got line")
 				cnn.SetReadDeadline(time.Now().Add(time.Second))
 			default:
+				log.Printf("[DEBUG]  line closed")
 			}
 		}
+		if ctx.Err() != nil {
+			return
+		}
+		log.Printf("[DEBUG]  Hi there")
 		if err := scanner.Err(); err != nil {
 			errs <- err
 			return
